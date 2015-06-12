@@ -74,23 +74,25 @@ def main():
         abs_url_regex = re.compile(r'^(?:[a-z]+:)?//', flags=re.IGNORECASE)
         def fixLinks(text, parser):
             d = PyQuery(bytes(bytearray(text, encoding='utf-8')), parser=parser)
-            # for element in d('a'):
-            #     e = PyQuery(element)
-            #     href = e.attr('href')
-            #     print href
-            #     if href is None:
-            #         continue
-            #     new_href = re.sub(r'(rss/index\.html)|(rss/?)$', 'rss/index.rss', href)
-            #     if not abs_url_regex.search(href):
-            #         new_href = re.sub(r'/index\.html$', '/', new_href)
-            #     if href != new_href:
-            #         e.attr('href', new_href)
-            #         print "\t", href, "=>", new_href
+            for element in d('a'):
+                e = PyQuery(element)
+                href = e.attr('href')
+                print href
+                if href is None:
+                    continue
+                new_href = re.sub(r'(rss/index\.html)|(rss/?)$', 'rss/index.rss', href)
+                if not abs_url_regex.search(href):
+                    new_href = re.sub(r'/index\.html$', '/', new_href)
+                if href != new_href:
+                    e.attr('href', new_href)
+                    print "\t", href, "=>", new_href
             # remove ?v=XXXXXXXXX in css
             for element in d('link'):
                 e = PyQuery(element)
                 href = e.attr('href')
                 if href is None:
+                    continue
+                if re.match(r'http://fonts',href) is not None:
                     continue
                 new_href = re.sub(r'\?.*', '',href)  
                 if href != new_href:
